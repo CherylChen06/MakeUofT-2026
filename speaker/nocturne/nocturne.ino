@@ -1,4 +1,4 @@
-#define SPK 9
+#define SPK 6
 
 #define Bb4 466
 #define B4 494
