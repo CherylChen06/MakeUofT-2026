@@ -1,11 +1,10 @@
 #include <SoftwareSerial.h>
-SoftwareSerial BT(2,3);
+SoftwareSerial BT(8,9); // RX, TX
 
 enum State {
   IDLE,
   CONNECTED,
-  ANIMATING,
-  PLAYING
+  ANIMATING
 };
 
 State currentState = IDLE;
@@ -20,46 +19,40 @@ void setup() {
 
 void loop() {
 
+  // Check for master signal
   if(BT.available()){
     char c = BT.read();
-
-    Serial.print("SLAVE got: ");
+    Serial.print("SLAVE received: ");
     Serial.println(c);
 
     if(c == 'S' && currentState == IDLE){
-      Serial.println("SLAVE: Start command received");
+      Serial.println("SLAVE: Start animation signal received");
       currentState = CONNECTED;
     }
   }
 
+  // ---------- State Machine ----------
   switch(currentState){
 
     case IDLE:
       break;
 
-
     case CONNECTED:
-      Serial.println("SLAVE: Connected state");
+      Serial.println("STATE → CONNECTED");
       showConnectedScreen();
       currentState = ANIMATING;
       break;
 
-
     case ANIMATING:
-      Serial.println("SLAVE: Animation start");
+      Serial.println("STATE → ANIMATING");
       runAnimation();
-      currentState = PLAYING;
-      break;
-
-
-    case PLAYING:
-      Serial.println("SLAVE: Music start");
-      playMusic();
-      currentState = IDLE;
+      currentState = IDLE; // back to idle after animation
       showIdleScreen();
       break;
   }
 }
+
+// ---------- SLAVE PLACEHOLDER FUNCTIONS ----------
 
 void showIdleScreen(){
   Serial.println("SLAVE DISPLAY: Idle");
@@ -70,11 +63,6 @@ void showConnectedScreen(){
 }
 
 void runAnimation(){
-  Serial.println("SLAVE animation...");
-  delay(2000);
-}
-
-void playMusic(){
-  Serial.println("SLAVE music...");
-  delay(2000);
+  Serial.println("SLAVE animation running...");
+  delay(2000); // simulate animation
 }
